@@ -15,25 +15,22 @@ describe('Product Page tests', () => {
                 'https://ecommerce-playground.lambdatest.io/index.php?route=product%2Fsearch&search=phone');
         productPage.elements.productItem().should('have.length', 4);
 
-        cy.get('div.product-thumb-top > div.image').eq(1).should('be.visible');
-        cy.get('div.product-thumb-top > div.image').eq(1)
+        productPage.elements.productCard().should('be.visible');
+        productPage.elements.productCard()
             .realHover()
             .then(() => {
-                cy.get('div.product-action > button.btn.btn-cart.cart-55').should('be.visible');
-                cy.get('div.product-action > button.btn.btn-cart.cart-55')
-                    .click({ force: true });
+                productPage.elements.cartHoverIcon().should('be.visible');
+                productPage.elements.cartHoverIcon().click({ force: true });
             });
         cy.contains('a', 'Checkout').click({ force: true });
         cy.url().should('include', '/index.php?route=checkout/checkout');
 
-        cy.fixture('user').then(user => {
-            cy.fillPaymentForm(user);
-        });
+        productPage.fillRegistrationForm();
         cy.url().should('include', '/checkout/confirm');
-        cy.contains('table > tfoot > tr:nth-child(5) > td:nth-child(2)', /[$]\d+\.\d{2}$/);
-        cy.get('#button-confirm').should('be.visible').contains('Confirm Order ').click();
+        cy.contains('tfoot > tr:nth-child(5) > td:nth-child(2)', /[$]\d+\.\d{2}$/);
+        productPage.elements.confirmOrderBtn().should('be.visible').contains('Confirm Order ').click();
         cy.url().should('include', '/success');
-        cy.get('.buttons > .btn').contains('Continue').click();
+        productPage.elements.continueShoppingBtn().contains('Continue').click();
         cy.url().should('include', '/home');
     });
 });
